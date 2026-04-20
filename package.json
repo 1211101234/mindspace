@@ -1,0 +1,16 @@
+{
+  "name": "mindspace",
+  "version": "1.0.0",
+  "description": "Anonymous mental health support chat with AI guidance",
+  "main": "server.js",
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}
