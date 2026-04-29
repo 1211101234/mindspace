@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>Mindspace — Mod Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #f0ebe3;
+      --surface:       #f7f3ee;
+      --surface2:      #ede8e0;
+      --surface3:      #e6dfd5;
+      --border:        rgba(100,88,70,.12);
+      --border2:       rgba(100,88,70,.22);
+      --text:          #3a3530;
+      --text2:         #5c5650;
+      --muted:         #9a9088;
+      --matcha:        #7a9e7e;
+      --matcha-deep:   #5a7e5e;
+      --matcha-bg:     #eaf2eb;
+      --matcha-border: rgba(122,158,126,.3);
+      --sage-ai:       #6b9e8a;
+      --sage-ai-bg:    #e8f3ef;
+      --accent:        #c9a87c;
+      --accent-bg:     #f5ede0;
+      --crisis:        #c97070;
+      --crisis-bg:     #fdf0f0;
+      --crisis-border: rgba(201,112,112,.25);
+      --join:          #7a9eb0;
+      --serif:         'DM Serif Display', Georgia, serif;
+      --sans:          'DM Sans', sans-serif;
+      --radius:        12px;
+      --radius-lg:     16px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:            #1a1714;
+        --surface:       #221f1b;
+        --surface2:      #2a2620;
+        --surface3:      #332e28;
+        --border:        rgba(255,240,210,.08);
+        --border2:       rgba(255,240,210,.15);
+        --text:          #e8e0d4;
+        --text2:         #b8afa4;
+        --muted:         #7a7168;
+        --matcha:        #6a9070;
+        --matcha-deep:   #8ab890;
+        --matcha-bg:     #1e2e20;
+        --matcha-border: rgba(106,144,112,.3);
+        --sage-ai:       #5a9080;
+        --sage-ai-bg:    #1a2e28;
+        --accent:        #b89060;
+        --accent-bg:     #2a2018;
+        --crisis:        #c07070;
+        --crisis-bg:     #2a1818;
+        --crisis-border: rgba(192,112,112,.25);
+      }
+    }
+
+    html, body { height:100%; background:var(--bg); color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.6; }
+    body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:0; background-image:radial-gradient(circle,rgba(100,88,70,.05) 1px,transparent 1px); background-size:22px 22px; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      padding:24px; z-index:100; background:var(--bg);
+      transition:opacity .5s ease, transform .5s ease;
+    }
+    #login-screen.out { opacity:0; transform:translateY(-12px); pointer-events:none; }
+    .login-card {
+      background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius-lg);
+      padding:36px 32px; width:100%; max-width:380px; text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,.1);
+    }
+    .login-card .shield { font-size:36px; margin-bottom:16px; }
+    .login-card h1 { font-family:var(--serif); font-size:28px; font-weight:400; margin-bottom:6px; }
+    .login-card h1 em { color:var(--accent); font-style:italic; }
+    .login-card p { font-size:13px; color:var(--text2); margin-bottom:24px; line-height:1.6; }
+    .login-input {
+      width:100%; background:var(--bg); border:1.5px solid var(--border2); border-radius:var(--radius);
+      padding:11px 14px; color:var(--text); font-family:var(--sans); font-size:14px;
+      outline:none; margin-bottom:12px; transition:border-color .15s; text-align:center; letter-spacing:.05em;
+    }
+    .login-input:focus { border-color:var(--accent); }
+    .login-input::placeholder { color:var(--muted); letter-spacing:0; }
+    .login-btn {
+      width:100%; padding:12px; background:var(--accent); border:none; border-radius:var(--radius);
+      color:#fff; font-family:var(--sans); font-size:14px; font-weight:500; cursor:pointer;
+      transition:opacity .15s;
+    }
+    .login-btn:hover { opacity:.88; }
+    .login-err { font-size:12px; color:var(--crisis); margin-top:10px; display:none; }
+
+    /* ── APP ── */
+    #app { display:none; min-height:100%; position:relative; z-index:1; }
+    #app.visible { display:block; }
+
+    /* ── HEADER ── */
+    #dash-header {
+      background:var(--surface); border-bottom:1.5px solid var(--border2);
+      padding:0 28px; height:56px; display:flex; align-items:center; gap:12px;
+      position:sticky; top:0; z-index:50;
+    }
+    .dash-logo { font-family:var(--serif); font-size:18px; }
+    .dash-logo span { color:var(--accent); font-style:italic; }
+    .dash-divider { width:1px; height:20px; background:var(--border2); }
+    .dash-title { font-size:13px; color:var(--muted); font-weight:500; letter-spacing:.06em; text-transform:uppercase; }
+    .dash-persona { font-size:11px; color:var(--accent); background:var(--accent-bg); padding:3px 10px; border-radius:20px; border:1px solid rgba(201,168,124,.3); margin-left:auto; }
+    .dash-status { width:8px; height:8px; border-radius:50%; background:var(--matcha); box-shadow:0 0 0 3px rgba(122,158,126,.2); animation:pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 3px rgba(122,158,126,.2)} 50%{box-shadow:0 0 0 6px rgba(122,158,126,.05)} }
+    .logout-btn {
+      background:none; border:1px solid var(--border2); border-radius:8px;
+      padding:5px 12px; font-size:12px; color:var(--muted); cursor:pointer; font-family:var(--sans);
+    }
+    .logout-btn:hover { border-color:var(--crisis); color:var(--crisis); }
+
+    /* ── LAYOUT ── */
+    #dash-body { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; padding:24px 28px; max-width:1400px; }
+    @media(max-width:1100px) { #dash-body { grid-template-columns:1fr 1fr; } }
+    @media(max-width:700px)  { #dash-body { grid-template-columns:1fr; padding:16px; } }
+
+    /* ── STATS BAR ── */
+    #stats-bar {
+      grid-column:1/-1; display:grid; grid-template-columns:repeat(5,1fr); gap:12px;
+    }
+    @media(max-width:700px) { #stats-bar { grid-template-columns:repeat(2,1fr); } }
+    .stat-card {
+      background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius);
+      padding:14px 16px; transition:border-color .15s;
+    }
+    .stat-card:hover { border-color:var(--border2); }
+    .stat-label { font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .stat-value { font-family:var(--serif); font-size:28px; font-weight:400; line-height:1; }
+    .stat-value.crisis { color:var(--crisis); }
+    .stat-value.matcha  { color:var(--matcha-deep); }
+    .stat-value.accent  { color:var(--accent); }
+    .stat-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+
+    /* ── SECTION CARDS ── */
+    .dash-section {
+      background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius-lg);
+      display:flex; flex-direction:column; overflow:hidden;
+    }
+    .dash-section.span2 { grid-column:span 2; }
+    @media(max-width:1100px) { .dash-section.span2 { grid-column:span 1; } }
+    .section-head {
+      padding:14px 18px 12px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:8px; flex-shrink:0;
+    }
+    .section-head h2 { font-family:var(--serif); font-size:17px; font-weight:400; flex:1; }
+    .section-badge {
+      font-size:10px; padding:2px 8px; border-radius:20px; font-weight:500;
+      background:var(--crisis-bg); color:var(--crisis); border:1px solid var(--crisis-border);
+    }
+    .section-badge.green { background:var(--matcha-bg); color:var(--matcha-deep); border-color:var(--matcha-border); }
+    .section-badge.accent { background:var(--accent-bg); color:var(--accent); border-color:rgba(201,168,124,.3); }
+    .section-body { padding:14px 18px; flex:1; overflow-y:auto; max-height:360px; }
+    .section-body::-webkit-scrollbar { width:3px; }
+    .section-body::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+    /* ── FLAG ITEMS ── */
+    .flag-item {
+      padding:10px 0; border-bottom:1px solid var(--border); animation:fadeUp .2s ease;
+    }
+    .flag-item:last-child { border-bottom:none; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+    .flag-top { display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
+    .flag-persona { font-size:11px; font-weight:500; color:var(--matcha-deep); }
+    .flag-room { font-size:10px; color:var(--muted); }
+    .flag-time  { font-size:10px; color:var(--muted); margin-left:auto; }
+    .flag-text  { font-size:13px; color:var(--text2); margin-bottom:6px; line-height:1.5; }
+    .flag-reason-tag {
+      display:inline-block; font-size:10px; padding:1px 7px; border-radius:20px;
+      background:var(--crisis-bg); color:var(--crisis); border:1px solid var(--crisis-border);
+      margin-bottom:6px;
+    }
+    .flag-actions { display:flex; gap:6px; flex-wrap:wrap; }
+    .flag-actions button {
+      font-size:11px; padding:4px 11px; border-radius:8px; cursor:pointer;
+      font-family:var(--sans); font-weight:500; transition:all .12s;
+    }
+    .btn-dismiss { background:none; border:1px solid var(--border2); color:var(--muted); }
+    .btn-dismiss:hover { border-color:var(--matcha); color:var(--matcha-deep); }
+    .btn-remove  { background:var(--crisis-bg); border:1px solid var(--crisis-border); color:var(--crisis); }
+    .btn-remove:hover  { background:#fde0e0; }
+    .btn-escalate { background:var(--accent-bg); border:1px solid rgba(201,168,124,.3); color:var(--accent); }
+    .btn-escalate:hover { opacity:.8; }
+    .empty-state { text-align:center; padding:32px 16px; color:var(--muted); font-size:13px; }
+    .empty-state .empty-icon { font-size:28px; margin-bottom:8px; }
+
+    /* ── ROOM MONITOR ── */
+    .room-row {
+      display:flex; align-items:center; gap:10px; padding:9px 0;
+      border-bottom:1px solid var(--border); transition:background .12s;
+    }
+    .room-row:last-child { border-bottom:none; }
+    .room-dot { width:8px; height:8px; border-radius:50%; background:var(--matcha); flex-shrink:0; }
+    .room-dot.empty { background:var(--border2); }
+    .room-name { font-size:13px; font-weight:500; flex:1; }
+    .room-users { font-size:11px; color:var(--muted); }
+    .room-mood-pill {
+      font-size:10px; padding:2px 8px; border-radius:20px;
+      background:var(--matcha-bg); color:var(--matcha-deep);
+      border:1px solid var(--matcha-border);
+    }
+    .room-last { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+    .room-actions { display:flex; gap:4px; }
+    .room-btn {
+      font-size:10px; padding:3px 8px; border-radius:6px; cursor:pointer;
+      font-family:var(--sans); background:none; border:1px solid var(--border);
+      color:var(--muted); transition:all .12s;
+    }
+    .room-btn:hover { border-color:var(--matcha); color:var(--matcha-deep); }
+    .room-btn.slow { color:var(--accent); border-color:rgba(201,168,124,.3); }
+    .room-btn.slow:hover { background:var(--accent-bg); }
+
+    /* ── CRISIS FEED ── */
+    .crisis-item {
+      padding:10px 0; border-bottom:1px solid var(--border); animation:fadeUp .2s ease;
+    }
+    .crisis-item:last-child { border-bottom:none; }
+    .crisis-level-high { border-left:3px solid var(--crisis); padding-left:10px; margin-left:-4px; }
+    .crisis-level-medium { border-left:3px solid var(--accent); padding-left:10px; margin-left:-4px; }
+    .crisis-top { display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+    .crisis-badge-high { font-size:10px; padding:1px 7px; border-radius:20px; background:var(--crisis-bg); color:var(--crisis); border:1px solid var(--crisis-border); font-weight:500; }
+    .crisis-badge-med  { font-size:10px; padding:1px 7px; border-radius:20px; background:var(--accent-bg); color:var(--accent); border:1px solid rgba(201,168,124,.3); font-weight:500; }
+    .crisis-persona { font-size:11px; font-weight:500; color:var(--text2); }
+    .crisis-room    { font-size:10px; color:var(--muted); }
+    .crisis-time    { font-size:10px; color:var(--muted); margin-left:auto; }
+    .crisis-text    { font-size:12px; color:var(--text2); line-height:1.5; font-style:italic; }
+
+    /* ── MOD APPLICATIONS ── */
+    .app-item { padding:10px 0; border-bottom:1px solid var(--border); }
+    .app-item:last-child { border-bottom:none; }
+    .app-top { display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
+    .app-persona { font-size:12px; font-weight:500; color:var(--matcha-deep); }
+    .app-time { font-size:10px; color:var(--muted); margin-left:auto; }
+    .app-why  { font-size:13px; color:var(--text2); margin-bottom:4px; line-height:1.5; }
+    .app-avail { font-size:11px; color:var(--muted); margin-bottom:6px; }
+    .app-actions { display:flex; gap:6px; }
+    .btn-approve { background:var(--matcha-bg); border:1px solid var(--matcha-border); color:var(--matcha-deep); font-size:11px; padding:4px 11px; border-radius:8px; cursor:pointer; font-family:var(--sans); font-weight:500; }
+    .btn-approve:hover { border-color:var(--matcha); }
+    .btn-decline { background:none; border:1px solid var(--border2); color:var(--muted); font-size:11px; padding:4px 11px; border-radius:8px; cursor:pointer; font-family:var(--sans); }
+    .btn-decline:hover { border-color:var(--crisis); color:var(--crisis); }
+
+    /* ── BROADCAST ── */
+    .broadcast-section { padding:14px 18px; border-top:1px solid var(--border); flex-shrink:0; }
+    .broadcast-label { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .broadcast-row { display:flex; gap:8px; align-items:flex-end; }
+    .broadcast-room-select {
+      background:var(--bg); border:1.5px solid var(--border2); border-radius:8px;
+      padding:8px 10px; color:var(--text); font-family:var(--sans); font-size:12px;
+      outline:none; width:130px; flex-shrink:0;
+    }
+    .broadcast-room-select:focus { border-color:var(--sage-ai); }
+    .broadcast-input {
+      flex:1; background:var(--bg); border:1.5px solid var(--border2); border-radius:8px;
+      padding:8px 12px; color:var(--text); font-family:var(--sans); font-size:13px; outline:none;
+    }
+    .broadcast-input:focus { border-color:var(--sage-ai); }
+    .broadcast-input::placeholder { color:var(--muted); }
+    .broadcast-btn {
+      background:var(--sage-ai); border:none; border-radius:8px; padding:8px 16px;
+      color:#fff; font-size:12px; font-weight:500; cursor:pointer; font-family:var(--sans);
+      white-space:nowrap; flex-shrink:0;
+    }
+    .broadcast-btn:hover { opacity:.88; }
+
+    /* ── SLOW MODE CONTROLS ── */
+    .slow-mode-section { padding:14px 18px; border-top:1px solid var(--border); flex-shrink:0; }
+    .slow-mode-row { display:flex; gap:8px; align-items:center; }
+    .slow-mode-select {
+      background:var(--bg); border:1.5px solid var(--border2); border-radius:8px;
+      padding:7px 10px; color:var(--text); font-family:var(--sans); font-size:12px; outline:none; flex:1;
+    }
+    .slow-mode-select:focus { border-color:var(--accent); }
+    .slow-secs-input {
+      background:var(--bg); border:1.5px solid var(--border2); border-radius:8px;
+      padding:7px 10px; color:var(--text); font-family:var(--sans); font-size:12px; outline:none; width:70px;
+    }
+    .slow-secs-input:focus { border-color:var(--accent); }
+    .slow-apply-btn {
+      background:var(--accent-bg); border:1px solid rgba(201,168,124,.4); border-radius:8px;
+      padding:7px 14px; color:var(--accent); font-size:12px; font-weight:500; cursor:pointer; font-family:var(--sans);
+    }
+    .slow-apply-btn:hover { opacity:.88; }
+    .slow-clear-btn {
+      background:none; border:1px solid var(--border2); border-radius:8px;
+      padding:7px 12px; color:var(--muted); font-size:12px; cursor:pointer; font-family:var(--sans);
+    }
+    .slow-clear-btn:hover { border-color:var(--crisis); color:var(--crisis); }
+
+    /* ── TOAST ── */
+    .dash-toast {
+      position:fixed; top:70px; left:50%; transform:translateX(-50%);
+      background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius);
+      padding:10px 20px; font-size:13px; color:var(--text2); z-index:200;
+      box-shadow:0 6px 20px rgba(0,0,0,.12); display:none; white-space:nowrap;
+      animation:fadeUp .2s ease;
+    }
+    .dash-toast.show { display:block; }
+
+    /* ── REFRESH BTN ── */
+    .refresh-btn {
+      background:none; border:1px solid var(--border); border-radius:8px; padding:4px 10px;
+      font-size:11px; color:var(--muted); cursor:pointer; font-family:var(--sans);
+      transition:all .15s;
+    }
+    .refresh-btn:hover { border-color:var(--matcha); color:var(--matcha-deep); }
+    .refreshing { animation:spin .6s linear infinite; display:inline-block; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    :focus-visible { outline:2px solid var(--matcha); outline-offset:2px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="shield">🛡</div>
+    <h1>Mod <em>Dashboard</em></h1>
+    <p>Enter your moderator secret to access the dashboard. This page is restricted to verified moderators only.</p>
+    <input type="password" id="login-secret" class="login-input" placeholder="Moderator secret…" autocomplete="off" aria-label="Moderator secret"/>
+    <button class="login-btn" id="login-btn">Access Dashboard</button>
+    <div class="login-err" id="login-err">Incorrect secret — access denied.</div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <header id="dash-header">
+    <span class="dash-logo">Mind<span>space</span></span>
+    <div class="dash-divider"></div>
+    <span class="dash-title">Mod Dashboard</span>
+    <div class="dash-status" id="conn-status" title="Connected"></div>
+    <span class="dash-persona" id="dash-persona-tag">—</span>
+    <button class="logout-btn" id="logout-btn">Sign out</button>
+  </header>
+
+  <div id="dash-body">
+
+    <!-- Stats bar -->
+    <div id="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">Active users</div>
+        <div class="stat-value matcha" id="stat-users">—</div>
+        <div class="stat-sub">across all rooms</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active rooms</div>
+        <div class="stat-value matcha" id="stat-rooms">—</div>
+        <div class="stat-sub">with users present</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending flags</div>
+        <div class="stat-value crisis" id="stat-flags">—</div>
+        <div class="stat-sub">awaiting review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Crisis events</div>
+        <div class="stat-value crisis" id="stat-crisis">—</div>
+        <div class="stat-sub">last 24 hours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Mod applications</div>
+        <div class="stat-value accent" id="stat-apps">—</div>
+        <div class="stat-sub">pending review</div>
+      </div>
+    </div>
+
+    <!-- Flag Queue -->
+    <div class="dash-section span2">
+      <div class="section-head">
+        <h2>🚩 Flag Queue</h2>
+        <span class="section-badge" id="flag-count-badge">0</span>
+        <button class="refresh-btn" id="refresh-flags">↻ Refresh</button>
+      </div>
+      <div class="section-body" id="flag-list">
+        <div class="empty-state"><div class="empty-icon">✅</div>No pending flags</div>
+      </div>
+    </div>
+
+    <!-- Crisis Feed -->
+    <div class="dash-section">
+      <div class="section-head">
+        <h2>🆘 Crisis Feed</h2>
+        <span class="section-badge" id="crisis-count-badge">0</span>
+      </div>
+      <div class="section-body" id="crisis-feed">
+        <div class="empty-state"><div class="empty-icon">🌿</div>No crisis events yet</div>
+      </div>
+    </div>
+
+    <!-- Room Monitor -->
+    <div class="dash-section span2">
+      <div class="section-head">
+        <h2>🏠 Room Monitor</h2>
+        <span class="section-badge green" id="room-count-badge">0 active</span>
+        <button class="refresh-btn" id="refresh-rooms">↻ Refresh</button>
+      </div>
+      <div class="section-body" id="room-list">
+        <div class="empty-state"><div class="empty-icon">💭</div>No rooms data yet</div>
+      </div>
+      <!-- Slow mode controls -->
+      <div class="slow-mode-section">
+        <div class="broadcast-label">Slow mode</div>
+        <div class="slow-mode-row">
+          <select class="slow-mode-select" id="slow-room-select" aria-label="Select room for slow mode">
+            <option value="">Select room…</option>
+          </select>
+          <input type="number" class="slow-secs-input" id="slow-secs" value="30" min="0" max="300" aria-label="Slow mode seconds"/>
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap">sec</span>
+          <button class="slow-apply-btn" id="slow-apply-btn">Apply</button>
+          <button class="slow-clear-btn" id="slow-clear-btn">Clear</button>
+        </div>
+      </div>
+      <!-- Broadcast as Room Guide -->
+      <div class="broadcast-section">
+        <div class="broadcast-label">Post as Room Guide</div>
+        <div class="broadcast-row">
+          <select class="broadcast-room-select" id="broadcast-room" aria-label="Select broadcast room">
+            <option value="">All rooms</option>
+          </select>
+          <input type="text" class="broadcast-input" id="broadcast-msg" placeholder="Message from Room Guide…" maxlength="400" aria-label="Broadcast message"/>
+          <button class="broadcast-btn" id="broadcast-send-btn">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mod Applications -->
+    <div class="dash-section">
+      <div class="section-head">
+        <h2>🙋 Mod Applications</h2>
+        <span class="section-badge accent" id="apps-count-badge">0</span>
+        <button class="refresh-btn" id="refresh-apps">↻ Refresh</button>
+      </div>
+      <div class="section-body" id="apps-list">
+        <div class="empty-state"><div class="empty-icon">📭</div>No applications yet</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="dash-toast" id="dash-toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let modSecret = '';
+  let modToken  = '';
+  let socket    = null;
+  let crisisCount = 0;
+
+  // ── Login ──────────────────────────────────────────────────────────────────
+  function doLogin() {
+    const secret = document.getElementById('login-secret').value.trim();
+    if (!secret) return;
+    modSecret = secret;
+    // Verify via HTTP first
+    fetch('/mod/flags', { headers: { 'x-mod-secret': secret } })
+      .then(r => {
+        if (r.status === 403) throw new Error('forbidden');
+        return r.json();
+      })
+      .then(flags => {
+        // Get a token for socket use
+        return fetch('/mod/token', {
+          method: 'POST',
+          headers: { 'x-mod-secret': secret, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ persona: 'DashboardMod' })
+        }).then(r => r.json()).then(d => { modToken = d.token; return flags; });
+      })
+      .then(flags => {
+        document.getElementById('login-screen').classList.add('out');
+        setTimeout(() => {
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('app').classList.add('visible');
+          initSocket();
+          loadAll(flags);
+        }, 500);
+      })
+      .catch(() => {
+        document.getElementById('login-err').style.display = 'block';
+      });
+  }
+
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.getElementById('login-secret').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    modSecret = ''; modToken = '';
+    if (socket) socket.disconnect();
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-screen').classList.remove('out');
+    document.getElementById('login-secret').value = '';
+    document.getElementById('login-err').style.display = 'none';
+  });
+
+  // ── Socket ─────────────────────────────────────────────────────────────────
+  function initSocket() {
+    socket = io();
+    socket.on('connect', () => {
+      document.getElementById('conn-status').style.background = 'var(--matcha)';
+      socket.emit('mod auth', modSecret);
+    });
+    socket.on('disconnect', () => {
+      document.getElementById('conn-status').style.background = 'var(--crisis)';
+    });
+    socket.on('mod auth ok', ({ flags, token }) => {
+      if (token) modToken = token;
+      document.getElementById('dash-persona-tag').textContent = '🛡 Moderator';
+      renderFlags(flags || []);
+    });
+    socket.on('mod alert', ({ level, persona, room, text, ts }) => {
+      crisisCount++;
+      document.getElementById('stat-crisis').textContent = crisisCount;
+      document.getElementById('crisis-count-badge').textContent = crisisCount;
+      prependCrisisItem({ level, persona, room, text, ts: ts || Date.now() });
+    });
+    socket.on('mod dashboard data', (data) => {
+      if (data.stats)  updateStats(data.stats);
+      if (data.rooms)  renderRooms(data.rooms);
+    });
+    // Auto-refresh rooms every 15s
+    setInterval(() => {
+      if (socket && socket.connected) socket.emit('mod request dashboard');
+    }, 15000);
+  }
+
+  // ── Load all data ──────────────────────────────────────────────────────────
+  function loadAll(initialFlags) {
+    if (initialFlags) renderFlags(initialFlags);
+    loadStats();
+    loadRooms();
+    loadApps();
+  }
+
+  async function apiGet(path) {
+    const headers = modToken
+      ? { 'x-mod-token': modToken }
+      : { 'x-mod-secret': modSecret };
+    const r = await fetch(path, { headers });
+    if (!r.ok) throw new Error('API error ' + r.status);
+    return r.json();
+  }
+
+  async function loadStats() {
+    try {
+      const data = await apiGet('/mod/dashboard/stats');
+      updateStats(data);
+    } catch(e) { console.warn('Stats load failed', e); }
+  }
+
+  async function loadRooms() {
+    try {
+      const data = await apiGet('/mod/rooms');
+      renderRooms(data.rooms || []);
+    } catch(e) { console.warn('Rooms load failed', e); }
+  }
+
+  async function loadFlags() {
+    try {
+      const data = await apiGet('/mod/flags');
+      renderFlags(Array.isArray(data) ? data : []);
+    } catch(e) { console.warn('Flags load failed', e); }
+  }
+
+  async function loadApps() {
+    try {
+      const data = await apiGet('/mod/applications');
+      renderApps(data.applications || []);
+    } catch(e) { console.warn('Apps load failed', e); }
+  }
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  function updateStats(data) {
+    if (data.totalUsers  !== undefined) document.getElementById('stat-users').textContent  = data.totalUsers;
+    if (data.activeRooms !== undefined) document.getElementById('stat-rooms').textContent  = data.activeRooms;
+    if (data.pendingFlags !== undefined) document.getElementById('stat-flags').textContent = data.pendingFlags;
+    if (data.crisisToday !== undefined) {
+      document.getElementById('stat-crisis').textContent = data.crisisToday;
+      crisisCount = data.crisisToday;
+      document.getElementById('crisis-count-badge').textContent = crisisCount;
+    }
+    if (data.pendingApps !== undefined) document.getElementById('stat-apps').textContent   = data.pendingApps;
+  }
+
+  // ── Flags ──────────────────────────────────────────────────────────────────
+  function renderFlags(flags) {
+    const el = document.getElementById('flag-list');
+    const badge = document.getElementById('flag-count-badge');
+    badge.textContent = flags.length;
+    document.getElementById('stat-flags').textContent = flags.length;
+    if (!flags.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div>No pending flags — all clear</div>';
+      return;
+    }
+    el.innerHTML = '';
+    flags.forEach(f => {
+      const div = document.createElement('div');
+      div.className = 'flag-item';
+      div.dataset.flagId = f.id;
+      div.innerHTML = `
+        <div class="flag-top">
+          <span class="flag-persona">${esc(f.persona || '?')}</span>
+          <span class="flag-room">#${esc(f.room_id || '?')}</span>
+          <span class="flag-time">${fmtTime(f.ts || Date.now())}</span>
+        </div>
+        <div class="flag-text">"${esc((f.text||'').slice(0,120))}"</div>
+        <span class="flag-reason-tag">${esc(f.reason || 'flagged')}</span>
+        <div class="flag-actions">
+          <button class="btn-dismiss" onclick="dismissFlag(${f.id}, this)">Dismiss</button>
+          <button class="btn-remove"  onclick="removeMsg('${f.message_id}','${f.room_id||''}',${f.id}, this)">Remove message</button>
+          <button class="btn-escalate" onclick="escalateFlag(${f.id}, this)">Escalate</button>
+        </div>
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  function dismissFlag(id, btn) {
+    socket.emit('mod review flag', id);
+    btn.closest('.flag-item').style.opacity = '0.4';
+    setTimeout(() => { btn.closest('.flag-item')?.remove(); updateFlagBadge(); }, 400);
+    showToast('Flag dismissed');
+  }
+
+  function removeMsg(msgId, roomId, flagId, btn) {
+    socket.emit('mod remove', { msgId, roomId });
+    socket.emit('mod review flag', flagId);
+    btn.closest('.flag-item').style.opacity = '0.4';
+    setTimeout(() => { btn.closest('.flag-item')?.remove(); updateFlagBadge(); }, 400);
+    showToast('Message removed from room');
+  }
+
+  function escalateFlag(id, btn) {
+    socket.emit('mod review flag', id);
+    btn.closest('.flag-item').style.borderLeft = '3px solid var(--crisis)';
+    showToast('Flag escalated — please follow up directly');
+    setTimeout(() => { btn.closest('.flag-item')?.remove(); updateFlagBadge(); }, 600);
+  }
+
+  function updateFlagBadge() {
+    const count = document.querySelectorAll('.flag-item').length;
+    document.getElementById('flag-count-badge').textContent = count;
+    document.getElementById('stat-flags').textContent = count;
+    if (count === 0) {
+      document.getElementById('flag-list').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">✅</div>No pending flags — all clear</div>';
+    }
+  }
+
+  // ── Crisis feed ────────────────────────────────────────────────────────────
+  function prependCrisisItem({ level, persona, room, text, ts }) {
+    const el = document.getElementById('crisis-feed');
+    const empty = el.querySelector('.empty-state');
+    if (empty) empty.remove();
+    const div = document.createElement('div');
+    div.className = `crisis-item crisis-level-${level}`;
+    div.innerHTML = `
+      <div class="crisis-top">
+        ${level === 'high'
+          ? '<span class="crisis-badge-high">🚨 HIGH</span>'
+          : '<span class="crisis-badge-med">⚠️ CONCERN</span>'}
+        <span class="crisis-persona">${esc(persona)}</span>
+        <span class="crisis-room">#${esc(room)}</span>
+        <span class="crisis-time">${fmtTime(ts)}</span>
+      </div>
+      <div class="crisis-text">"${esc((text||'').slice(0,100))}"</div>
+    `;
+    el.insertBefore(div, el.firstChild);
+  }
+
+  // ── Rooms ──────────────────────────────────────────────────────────────────
+  function renderRooms(rooms) {
+    const el    = document.getElementById('room-list');
+    const badge = document.getElementById('room-count-badge');
+    const active = rooms.filter(r => r.userCount > 0).length;
+    badge.textContent = `${active} active`;
+
+    // Populate selects
+    const selects = ['broadcast-room', 'slow-room-select'];
+    selects.forEach(id => {
+      const sel = document.getElementById(id);
+      const val = sel.value;
+      while (sel.options.length > 1) sel.remove(1);
+      rooms.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id; opt.textContent = `#${r.label || r.id} (${r.userCount})`;
+        sel.appendChild(opt);
+      });
+      sel.value = val;
+    });
+
+    if (!rooms.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">💭</div>No rooms data</div>';
+      return;
+    }
+    el.innerHTML = '';
+    rooms.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'room-row';
+      div.innerHTML = `
+        <div class="room-dot ${r.userCount === 0 ? 'empty' : ''}"></div>
+        <div class="room-name">#${esc(r.label || r.id)}</div>
+        <div class="room-users">${r.userCount} user${r.userCount !== 1 ? 's' : ''}</div>
+        ${r.avgMood ? `<div class="room-mood-pill">mood ${r.avgMood.toFixed(1)}</div>` : ''}
+        ${r.lastMsg ? `<div class="room-last" title="${esc(r.lastMsg)}">${esc(r.lastMsg.slice(0,40))}</div>` : ''}
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  // ── Slow mode ──────────────────────────────────────────────────────────────
+  document.getElementById('slow-apply-btn').addEventListener('click', () => {
+    const roomId  = document.getElementById('slow-room-select').value;
+    const seconds = parseInt(document.getElementById('slow-secs').value, 10) || 30;
+    if (!roomId) { showToast('Select a room first'); return; }
+    socket.emit('mod slow mode', { roomId, seconds });
+    showToast(`Slow mode set to ${seconds}s in #${roomId}`);
+  });
+
+  document.getElementById('slow-clear-btn').addEventListener('click', () => {
+    const roomId = document.getElementById('slow-room-select').value;
+    if (!roomId) { showToast('Select a room first'); return; }
+    socket.emit('mod slow mode', { roomId, seconds: 0 });
+    showToast(`Slow mode cleared in #${roomId}`);
+  });
+
+  // ── Broadcast ──────────────────────────────────────────────────────────────
+  document.getElementById('broadcast-send-btn').addEventListener('click', sendBroadcast);
+  document.getElementById('broadcast-msg').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendBroadcast();
+  });
+
+  function sendBroadcast() {
+    const room = document.getElementById('broadcast-room').value;
+    const msg  = document.getElementById('broadcast-msg').value.trim();
+    if (!msg) { showToast('Enter a message first'); return; }
+    socket.emit('mod broadcast', { roomId: room || null, text: msg });
+    document.getElementById('broadcast-msg').value = '';
+    showToast(room ? `Message sent to #${room}` : 'Message sent to all rooms');
+  }
+
+  // ── Applications ───────────────────────────────────────────────────────────
+  function renderApps(apps) {
+    const el    = document.getElementById('apps-list');
+    const badge = document.getElementById('apps-count-badge');
+    badge.textContent = apps.length;
+    document.getElementById('stat-apps').textContent = apps.length;
+    if (!apps.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No applications yet</div>';
+      return;
+    }
+    el.innerHTML = '';
+    apps.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'app-item';
+      div.innerHTML = `
+        <div class="app-top">
+          <span class="app-persona">${esc(a.persona)}</span>
+          <span class="app-time">${fmtTime(a.ts || Date.now())}</span>
+        </div>
+        <div class="app-why">${esc(a.why)}</div>
+        ${a.availability ? `<div class="app-avail">Available: ${esc(a.availability)}</div>` : ''}
+        <div class="app-actions">
+          <button class="btn-approve" onclick="approveApp(this)">Approve</button>
+          <button class="btn-decline" onclick="declineApp(this)">Decline</button>
+        </div>
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  function approveApp(btn) {
+    btn.closest('.app-item').style.opacity = '0.4';
+    setTimeout(() => { btn.closest('.app-item')?.remove(); updateAppBadge(); }, 400);
+    showToast('Application approved — welcome to the team 🌿');
+  }
+
+  function declineApp(btn) {
+    btn.closest('.app-item').style.opacity = '0.4';
+    setTimeout(() => { btn.closest('.app-item')?.remove(); updateAppBadge(); }, 400);
+    showToast('Application declined');
+  }
+
+  function updateAppBadge() {
+    const count = document.querySelectorAll('.app-item').length;
+    document.getElementById('apps-count-badge').textContent = count;
+    document.getElementById('stat-apps').textContent = count;
+    if (count === 0) {
+      document.getElementById('apps-list').innerHTML =
+        '<div class="empty-state"><div class="empty-icon">📭</div>No applications yet</div>';
+    }
+  }
+
+  // ── Refresh buttons ────────────────────────────────────────────────────────
+  document.getElementById('refresh-flags').addEventListener('click', async function() {
+    this.innerHTML = '<span class="refreshing">↻</span> Refresh';
+    await loadFlags();
+    this.textContent = '↻ Refresh';
+  });
+
+  document.getElementById('refresh-rooms').addEventListener('click', async function() {
+    this.innerHTML = '<span class="refreshing">↻</span> Refresh';
+    await loadRooms();
+    this.textContent = '↻ Refresh';
+  });
+
+  document.getElementById('refresh-apps').addEventListener('click', async function() {
+    this.innerHTML = '<span class="refreshing">↻</span> Refresh';
+    await loadApps();
+    this.textContent = '↻ Refresh';
+  });
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+  }
+  function fmtTime(ts) {
+    return new Date(ts).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  }
+
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('dash-toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+  }
+</script>
+</body>
+</html>
