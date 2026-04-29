@@ -1,17 +1,32 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <link rel="icon" type="image/png" href="/icons/leaf.png?v=2" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <title>Mindspace — you are not alone</title>
-    <meta name="description" content="Anonymous, judgment-free mental health support community" />
-    <meta name="theme-color" content="#7a9e7e" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1714" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="Anonymous, judgment-free mental health support community"
+    />
+    <meta
+      name="theme-color"
+      content="#7a9e7e"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1a1714"
+      media="(prefers-color-scheme: dark)"
+    />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
     <!-- DOMPurify for XSS protection -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <link rel="stylesheet" href="/css/styles.css" />
@@ -21,59 +36,103 @@
 
     <!-- Session expiry banner -->
     <div id="session-banner" role="alert" aria-live="assertive">
-      <span id="session-banner-msg">Session idle — you'll be disconnected soon.</span>
+      <span id="session-banner-msg"
+        >Session idle — you'll be disconnected soon.</span
+      >
       <button onclick="dismissSessionBanner()">Stay connected</button>
     </div>
 
     <!-- Sidebar overlay (mobile) -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div
+      class="sidebar-overlay"
+      id="sidebar-overlay"
+      onclick="closeSidebar()"
+    ></div>
 
     <!-- ══ LANDING ══ -->
     <div id="landing" role="main" aria-label="Welcome to Mindspace">
       <div class="landing-inner">
-        <div class="logo-mark" aria-hidden="true">🌿</div>
+        <div class="logo-mark">
+          <img src="/icons/leaf.png" alt="Mindspace logo" />
+        </div>
         <h1>Mind<em>space</em></h1>
         <p>
-          An anonymous, judgment-free space to talk about what's weighing on you.<br />
+          An anonymous, judgment-free space to talk about what's weighing on
+          you.<br />
           You'll never need an account. No one knows who you are.
         </p>
         <div class="persona-preview" aria-live="polite">
           <div class="persona-dot" aria-hidden="true"></div>
           <div>
             <div class="label" id="persona-label">Your anonymous name</div>
-            <div class="name" id="persona-display" aria-labelledby="persona-label">—</div>
+            <div
+              class="name"
+              id="persona-display"
+              aria-labelledby="persona-label"
+            >
+              —
+            </div>
           </div>
         </div>
         <div class="choose-label" id="room-choose-label">Choose a space</div>
-        <div class="room-grid" id="room-grid" role="radiogroup" aria-labelledby="room-choose-label"></div>
+        <div
+          class="room-grid"
+          id="room-grid"
+          role="radiogroup"
+          aria-labelledby="room-choose-label"
+        ></div>
         <div class="custom-room-row">
-          <input id="custom-room-input" type="text" placeholder="or create your own room…" maxlength="30" aria-label="Create a custom room" />
+          <input
+            id="custom-room-input"
+            type="text"
+            placeholder="or create your own room…"
+            maxlength="30"
+            aria-label="Create a custom room"
+          />
         </div>
-        <button class="enter-btn" id="enter-btn" disabled onclick="enterApp()" aria-label="Enter Mindspace">
+        <button
+          class="enter-btn"
+          id="enter-btn"
+          disabled
+          onclick="enterApp()"
+          aria-label="Enter Mindspace"
+        >
           Enter Mindspace →
         </button>
         <p class="privacy-note">
-          🔒 Fully anonymous · No accounts · Messages not stored across restarts · You can leave anytime
+          🔒 Fully anonymous · No accounts · Messages not stored across restarts
+          · You can leave anytime
         </p>
       </div>
     </div>
 
     <!-- ══ APP ══ -->
     <div id="app" role="application" aria-label="Mindspace">
-
       <!-- Sidebar -->
       <nav id="sidebar" aria-label="Rooms and tools">
         <div class="sidebar-top">
           <span class="sidebar-logo">Mindspace</span>
-          <span class="my-persona-tag" id="my-persona-tag" aria-label="Your name">—</span>
-          <span class="mod-badge" id="mod-badge" title="You are a moderator">🛡 mod</span>
+          <span
+            class="my-persona-tag"
+            id="my-persona-tag"
+            aria-label="Your name"
+            >—</span
+          >
+          <span class="mod-badge" id="mod-badge" title="You are a moderator"
+            >🛡 mod</span
+          >
         </div>
         <div class="sidebar-section">
           <div class="sidebar-label" id="rooms-label">Rooms</div>
           <ul id="room-nav" role="list" aria-labelledby="rooms-label"></ul>
         </div>
         <div class="custom-room-mini">
-          <input id="sidebar-room-input" placeholder="new room…" maxlength="30" aria-label="New room name" />
+          <input
+            id="sidebar-room-input"
+            placeholder="new room…"
+            maxlength="30"
+            aria-label="New room name"
+          />
           <button onclick="sidebarJoinRoom()" aria-label="Join room">+</button>
         </div>
         <div class="presence-section" aria-label="People in this room">
@@ -86,40 +145,98 @@
             id="mod-dashboard-btn"
             onclick="window.open('/mod-dashboard.html', '_blank')"
             aria-label="Mod Dashboard"
-            style="display:none;color:var(--accent);border-color:rgba(201,168,124,0.3);background:var(--accent-bg)"
-          >🛡 Mod Dashboard</button>
-          <button class="sidebar-tool-btn sage-btn" onclick="openSagePanel()" aria-label="Open private Sage session">
+            style="
+              display: none;
+              color: var(--accent);
+              border-color: rgba(201, 168, 124, 0.3);
+              background: var(--accent-bg);
+            "
+          >
+            🛡 Mod Dashboard
+          </button>
+          <button
+            class="sidebar-tool-btn sage-btn"
+            onclick="openSagePanel()"
+            aria-label="Open private Sage session"
+          >
             🌿 Talk to Sage privately
           </button>
           <button
             class="sidebar-tool-btn"
             onclick="openPanel('journal-panel')"
             aria-label="Private journal"
-            style="color:var(--accent);border-color:rgba(201,168,124,0.3);background:var(--accent-bg)"
-          >📔 My Private Journal</button>
-          <button class="sidebar-tool-btn resources" onclick="openPanel('resources-panel')" aria-label="Resources and hotlines">
+            style="
+              color: var(--accent);
+              border-color: rgba(201, 168, 124, 0.3);
+              background: var(--accent-bg);
+            "
+          >
+            📔 My Private Journal
+          </button>
+          <button
+            class="sidebar-tool-btn resources"
+            onclick="openPanel('resources-panel')"
+            aria-label="Resources and hotlines"
+          >
             📚 Resources &amp; Hotlines
           </button>
-          <button class="sidebar-tool-btn breathe" onclick="openPanel('breathe-panel')" aria-label="Guided breathing">
+          <button
+            class="sidebar-tool-btn breathe"
+            onclick="openPanel('breathe-panel')"
+            aria-label="Guided breathing"
+          >
             🌬️ Guided Breathing
           </button>
-          <button class="sidebar-tool-btn crisis-btn" onclick="openPanel('crisis-panel')" aria-label="I need help now">
+          <button
+            class="sidebar-tool-btn crisis-btn"
+            onclick="openPanel('crisis-panel')"
+            aria-label="I need help now"
+          >
             🆘 I need help now
           </button>
-          <button class="sidebar-tool-btn resources" onclick="openPanel('settings-panel')" aria-label="Settings" style="margin-top:4px">
+          <button
+            class="sidebar-tool-btn resources"
+            onclick="openPanel('settings-panel')"
+            aria-label="Settings"
+            style="margin-top: 4px"
+          >
             ⚙️ Settings
           </button>
-          <a href="/safety" target="_blank"
-            style="font-size:11px;color:var(--muted);text-align:center;padding:4px;display:block;text-decoration:none"
-            aria-label="Safety and community guidelines">📜 Safety &amp; Guidelines</a>
+          <a
+            href="/safety"
+            target="_blank"
+            style="
+              font-size: 11px;
+              color: var(--muted);
+              text-align: center;
+              padding: 4px;
+              display: block;
+              text-decoration: none;
+            "
+            aria-label="Safety and community guidelines"
+            >📜 Safety &amp; Guidelines</a
+          >
         </div>
       </nav>
 
       <!-- Main chat -->
       <main id="chat" aria-label="Chat">
         <div id="room-header">
-          <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="false" id="hamburger-btn">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <button
+            class="hamburger"
+            onclick="toggleSidebar()"
+            aria-label="Toggle sidebar"
+            aria-expanded="false"
+            id="hamburger-btn"
+          >
+            <svg
+              viewBox="0 0 18 18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
               <line x1="2" y1="4" x2="16" y2="4" />
               <line x1="2" y1="9" x2="16" y2="9" />
               <line x1="2" y1="14" x2="16" y2="14" />
@@ -133,47 +250,104 @@
             <button
               onclick="toggleSearch()"
               aria-label="Search messages"
-              style="background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--muted);font-size:13px;font-family:var(--sans)"
-            >🔍</button>
-            <span class="slow-mode-badge" id="slow-mode-badge">⏳ slow mode</span>
+              style="
+                background: none;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 5px 10px;
+                cursor: pointer;
+                color: var(--muted);
+                font-size: 13px;
+                font-family: var(--sans);
+              "
+            >
+              🔍
+            </button>
+            <span class="slow-mode-badge" id="slow-mode-badge"
+              >⏳ slow mode</span
+            >
             <span class="safe-badge">safe space</span>
           </div>
         </div>
 
         <!-- Search bar -->
         <div id="search-bar" role="search">
-          <input id="search-input" placeholder="Search messages…" aria-label="Search messages" autocomplete="off" />
-          <button id="search-close" onclick="toggleSearch()" aria-label="Close search">×</button>
+          <input
+            id="search-input"
+            placeholder="Search messages…"
+            aria-label="Search messages"
+            autocomplete="off"
+          />
+          <button
+            id="search-close"
+            onclick="toggleSearch()"
+            aria-label="Close search"
+          >
+            ×
+          </button>
         </div>
-        <div id="search-results" role="listbox" aria-label="Search results"></div>
+        <div
+          id="search-results"
+          role="listbox"
+          aria-label="Search results"
+        ></div>
 
         <!-- Daily prompt -->
         <div id="daily-prompt-bar" aria-live="polite">
           <span class="dp-icon" aria-hidden="true">💭</span>
           <span class="dp-text" id="dp-text"></span>
-          <button class="dp-dismiss" onclick="dismissDailyPrompt()" aria-label="Dismiss daily prompt">×</button>
+          <button
+            class="dp-dismiss"
+            onclick="dismissDailyPrompt()"
+            aria-label="Dismiss daily prompt"
+          >
+            ×
+          </button>
         </div>
 
         <!-- Pinned message -->
         <div id="pinned-bar" role="alert" aria-live="polite">
           <span class="pin-icon" aria-hidden="true">📌</span>
           <span class="pin-text" id="pinned-text"></span>
-          <button class="pin-close" onclick="document.getElementById('pinned-bar').classList.remove('show')" aria-label="Dismiss pinned message">×</button>
+          <button
+            class="pin-close"
+            onclick="
+              document.getElementById('pinned-bar').classList.remove('show')
+            "
+            aria-label="Dismiss pinned message"
+          >
+            ×
+          </button>
         </div>
 
         <!-- Messages -->
-        <div id="messages" role="log" aria-label="Messages" aria-live="polite"></div>
+        <div
+          id="messages"
+          role="log"
+          aria-label="Messages"
+          aria-live="polite"
+        ></div>
 
         <!-- Reply bar -->
         <div id="reply-bar" aria-label="Replying to" aria-live="polite">
           <span class="rb-to">↩ replying to</span>
           <span class="rb-text" id="reply-preview"></span>
-          <button class="rb-cancel" onclick="cancelReply()" aria-label="Cancel reply">×</button>
+          <button
+            class="rb-cancel"
+            onclick="cancelReply()"
+            aria-label="Cancel reply"
+          >
+            ×
+          </button>
         </div>
 
         <!-- Input bar -->
         <div id="input-bar">
-          <span id="slow-mode-timer" aria-live="polite" aria-label="Slow mode countdown"></span>
+          <span
+            id="slow-mode-timer"
+            aria-live="polite"
+            aria-label="Slow mode countdown"
+          ></span>
           <textarea
             id="msg-input"
             rows="1"
@@ -182,8 +356,20 @@
             aria-label="Message input"
             aria-multiline="true"
           ></textarea>
-          <button id="send-btn" onclick="sendMessage()" aria-label="Send message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <button
+            id="send-btn"
+            onclick="sendMessage()"
+            aria-label="Send message"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
@@ -191,41 +377,91 @@
         </div>
 
         <!-- DM Panel -->
-        <div id="dm-panel" role="dialog" aria-label="Private conversation" aria-modal="true">
+        <div
+          id="dm-panel"
+          role="dialog"
+          aria-label="Private conversation"
+          aria-modal="true"
+        >
           <div id="dm-header">
             <div>
-              <div style="font-size:10px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px">Private conversation</div>
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--muted);
+                  letter-spacing: 0.06em;
+                  text-transform: uppercase;
+                  margin-bottom: 2px;
+                "
+              >
+                Private conversation
+              </div>
               <div id="dm-partner-name">—</div>
             </div>
-            <button class="dm-close-btn" onclick="closeDM()">End conversation</button>
+            <button class="dm-close-btn" onclick="closeDM()">
+              End conversation
+            </button>
           </div>
           <div id="dm-messages" role="log" aria-live="polite"></div>
           <div id="dm-input-bar">
-            <input id="dm-msg-input" placeholder="Message privately…" maxlength="600" aria-label="Private message" />
+            <input
+              id="dm-msg-input"
+              placeholder="Message privately…"
+              maxlength="600"
+              aria-label="Private message"
+            />
             <button id="dm-send-btn" onclick="sendDM()">Send</button>
           </div>
         </div>
 
         <!-- Sage Panel -->
-        <div id="sage-panel" role="dialog" aria-label="Private conversation with Sage" aria-modal="true">
+        <div
+          id="sage-panel"
+          role="dialog"
+          aria-label="Private conversation with Sage"
+          aria-modal="true"
+        >
           <div id="sage-header">
             <div>
-              <div style="font-size:10px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px">Private · AI guide</div>
+              <div
+                style="
+                  font-size: 10px;
+                  color: var(--muted);
+                  letter-spacing: 0.06em;
+                  text-transform: uppercase;
+                  margin-bottom: 2px;
+                "
+              >
+                Private · AI guide
+              </div>
               <div class="sage-panel-name">
                 🌿 Sage
-                <span class="memory-badge" id="sage-memory-badge" style="display:none">memory on</span>
+                <span
+                  class="memory-badge"
+                  id="sage-memory-badge"
+                  style="display: none"
+                  >memory on</span
+                >
               </div>
             </div>
-            <button class="sage-close-btn" onclick="closeSagePanel()">End session</button>
+            <button class="sage-close-btn" onclick="closeSagePanel()">
+              End session
+            </button>
           </div>
           <div id="sage-messages" role="log" aria-live="polite">
             <div class="sage-intro">
-              Sage is a gentle AI presence here to listen and support — not to diagnose or advise.
-              This conversation is private. Take your time. 🌿
+              Sage is a gentle AI presence here to listen and support — not to
+              diagnose or advise. This conversation is private. Take your time.
+              🌿
             </div>
           </div>
           <div id="sage-input-bar">
-            <input id="sage-msg-input" placeholder="Share what's on your mind…" maxlength="600" aria-label="Message to Sage" />
+            <input
+              id="sage-msg-input"
+              placeholder="Share what's on your mind…"
+              maxlength="600"
+              aria-label="Message to Sage"
+            />
             <button id="sage-send-btn" onclick="sendSageMessage()">Send</button>
           </div>
         </div>
@@ -233,23 +469,75 @@
     </div>
 
     <!-- ══ MOOD CHECK-IN ══ -->
-    <div id="mood-overlay" role="dialog" aria-label="Mood check-in" aria-modal="true">
+    <div
+      id="mood-overlay"
+      role="dialog"
+      aria-label="Mood check-in"
+      aria-modal="true"
+    >
       <div class="mood-card">
         <h2>How are you feeling?</h2>
-        <p>A quick check-in helps Sage understand how the room is doing today. Fully anonymous.</p>
-        <div class="mood-emojis" role="group" aria-label="Mood score from 1 to 5">
-          <button class="mood-btn" data-score="1" onclick="submitMood(1)" aria-label="1 - Struggling">😔</button>
-          <button class="mood-btn" data-score="2" onclick="submitMood(2)" aria-label="2 - Not great">😕</button>
-          <button class="mood-btn" data-score="3" onclick="submitMood(3)" aria-label="3 - Okay">😐</button>
-          <button class="mood-btn" data-score="4" onclick="submitMood(4)" aria-label="4 - Good">🙂</button>
-          <button class="mood-btn" data-score="5" onclick="submitMood(5)" aria-label="5 - Really good">😊</button>
+        <p>
+          A quick check-in helps Sage understand how the room is doing today.
+          Fully anonymous.
+        </p>
+        <div
+          class="mood-emojis"
+          role="group"
+          aria-label="Mood score from 1 to 5"
+        >
+          <button
+            class="mood-btn"
+            data-score="1"
+            onclick="submitMood(1)"
+            aria-label="1 - Struggling"
+          >
+            😔
+          </button>
+          <button
+            class="mood-btn"
+            data-score="2"
+            onclick="submitMood(2)"
+            aria-label="2 - Not great"
+          >
+            😕
+          </button>
+          <button
+            class="mood-btn"
+            data-score="3"
+            onclick="submitMood(3)"
+            aria-label="3 - Okay"
+          >
+            😐
+          </button>
+          <button
+            class="mood-btn"
+            data-score="4"
+            onclick="submitMood(4)"
+            aria-label="4 - Good"
+          >
+            🙂
+          </button>
+          <button
+            class="mood-btn"
+            data-score="5"
+            onclick="submitMood(5)"
+            aria-label="5 - Really good"
+          >
+            😊
+          </button>
         </div>
         <button class="mood-skip" onclick="skipMood()">Skip for now</button>
       </div>
     </div>
 
     <!-- ══ DM TOAST ══ -->
-    <div id="dm-toast" role="alertdialog" aria-label="Private message request" aria-live="assertive">
+    <div
+      id="dm-toast"
+      role="alertdialog"
+      aria-label="Private message request"
+      aria-live="assertive"
+    >
       <p><strong id="dm-requester">Someone</strong> wants to talk privately.</p>
       <div class="toast-btns">
         <button class="toast-accept" onclick="acceptDM()">Accept</button>
@@ -258,10 +546,21 @@
     </div>
 
     <!-- ══ TOAST NOTIFY ══ -->
-    <div id="toast-notify" class="toast-notify" role="status" aria-live="polite"></div>
+    <div
+      id="toast-notify"
+      class="toast-notify"
+      role="status"
+      aria-live="polite"
+    ></div>
 
     <!-- ══ REPORT DIALOG ══ -->
-    <div id="report-dialog" class="report-confirm" role="dialog" aria-label="Report message" aria-modal="true">
+    <div
+      id="report-dialog"
+      class="report-confirm"
+      role="dialog"
+      aria-label="Report message"
+      aria-modal="true"
+    >
       <h4>Report this message</h4>
       <select id="report-reason" aria-label="Reason for report">
         <option value="harmful">Harmful or dangerous content</option>
@@ -271,7 +570,9 @@
       </select>
       <div class="report-actions">
         <button class="report-cancel" onclick="closeReport()">Cancel</button>
-        <button class="report-submit" onclick="submitReport()">Submit Report</button>
+        <button class="report-submit" onclick="submitReport()">
+          Submit Report
+        </button>
       </div>
     </div>
 
@@ -279,18 +580,28 @@
     <div id="mod-panel"></div>
 
     <!-- ══ RESOURCES PANEL ══ -->
-    <div class="overlay-panel" id="resources-panel" role="dialog" aria-label="Resources and hotlines" aria-modal="true">
+    <div
+      class="overlay-panel"
+      id="resources-panel"
+      role="dialog"
+      aria-label="Resources and hotlines"
+      aria-modal="true"
+    >
       <div class="panel-card">
         <div class="panel-header">
           <span class="panel-title">Resources</span>
-          <button class="panel-close" onclick="closePanel('resources-panel')">Close</button>
+          <button class="panel-close" onclick="closePanel('resources-panel')">
+            Close
+          </button>
         </div>
         <div class="panel-body">
           <div class="resource-section">
             <h3>Crisis Helplines</h3>
             <div class="resource-card">
               <div class="r-name">Befrienders KL — Malaysia</div>
-              <div class="r-detail">24-hour emotional support for anyone in distress.</div>
+              <div class="r-detail">
+                24-hour emotional support for anyone in distress.
+              </div>
               <span class="r-number">📞 03-7627 2929</span>
             </div>
             <div class="resource-card">
@@ -300,13 +611,17 @@
             </div>
             <div class="resource-card">
               <div class="r-name">MIASA — Malaysia</div>
-              <div class="r-detail">Mental Illness Awareness &amp; Support Association.</div>
+              <div class="r-detail">
+                Mental Illness Awareness &amp; Support Association.
+              </div>
               <span class="r-number">📞 03-7732 2414</span>
             </div>
             <div class="resource-card">
               <div class="r-name">IASP Crisis Centres</div>
               <div class="r-detail">Find a crisis centre in your country.</div>
-              <span class="r-number">🌐 iasp.info/resources/Crisis_Centres</span>
+              <span class="r-number"
+                >🌐 iasp.info/resources/Crisis_Centres</span
+              >
             </div>
           </div>
           <div class="resource-section">
@@ -325,11 +640,18 @@
             </div>
             <div class="grounding-card">
               <div class="g-title">Cold Water Reset</div>
-              <div class="g-desc">Splash cold water on your face — it activates your body's dive reflex and slows your heart rate almost immediately.</div>
+              <div class="g-desc">
+                Splash cold water on your face — it activates your body's dive
+                reflex and slows your heart rate almost immediately.
+              </div>
             </div>
             <div class="grounding-card">
               <div class="g-title">Body Scan</div>
-              <div class="g-desc">Sit quietly. Starting from your toes, slowly notice each part of your body moving upward. Just observe — no judgment. Takes 2–3 minutes.</div>
+              <div class="g-desc">
+                Sit quietly. Starting from your toes, slowly notice each part of
+                your body moving upward. Just observe — no judgment. Takes 2–3
+                minutes.
+              </div>
             </div>
           </div>
         </div>
@@ -337,42 +659,93 @@
     </div>
 
     <!-- ══ BREATHING PANEL ══ -->
-    <div class="overlay-panel" id="breathe-panel" role="dialog" aria-label="Guided breathing exercise" aria-modal="true">
-      <div class="panel-card" style="max-width:360px">
+    <div
+      class="overlay-panel"
+      id="breathe-panel"
+      role="dialog"
+      aria-label="Guided breathing exercise"
+      aria-modal="true"
+    >
+      <div class="panel-card" style="max-width: 360px">
         <div class="panel-header">
           <span class="panel-title">Guided Breathing</span>
-          <button class="panel-close" onclick="stopBreathing(); closePanel('breathe-panel')">Close</button>
+          <button
+            class="panel-close"
+            onclick="
+              stopBreathing();
+              closePanel('breathe-panel');
+            "
+          >
+            Close
+          </button>
         </div>
-        <div class="panel-body" style="text-align:center">
+        <div class="panel-body" style="text-align: center">
           <div class="breathe-circle-wrap" aria-live="polite">
-            <div class="breathe-circle" id="breathe-circle" role="img" aria-label="Breathing guide">
-              <div class="breathe-count" id="breathe-count" aria-label="Countdown">—</div>
+            <div
+              class="breathe-circle"
+              id="breathe-circle"
+              role="img"
+              aria-label="Breathing guide"
+            >
+              <div
+                class="breathe-count"
+                id="breathe-count"
+                aria-label="Countdown"
+              >
+                —
+              </div>
               <div class="breathe-label" id="breathe-label">Ready</div>
             </div>
           </div>
           <p class="breathe-note">Box breathing · 4 counts each phase</p>
           <div class="breathe-btns">
-            <button class="breathe-start" id="breathe-start-btn" onclick="startBreathing()">Begin</button>
-            <button class="breathe-stop" onclick="stopBreathing()">Reset</button>
+            <button
+              class="breathe-start"
+              id="breathe-start-btn"
+              onclick="startBreathing()"
+            >
+              Begin
+            </button>
+            <button class="breathe-stop" onclick="stopBreathing()">
+              Reset
+            </button>
           </div>
-          <p style="font-size:11px;color:var(--muted);margin-top:16px;line-height:1.7">
-            In for 4 · Hold for 4 · Out for 4 · Hold for 4.<br />There's no rush. Repeat as many times as you need.
+          <p
+            style="
+              font-size: 11px;
+              color: var(--muted);
+              margin-top: 16px;
+              line-height: 1.7;
+            "
+          >
+            In for 4 · Hold for 4 · Out for 4 · Hold for 4.<br />There's no
+            rush. Repeat as many times as you need.
           </p>
         </div>
       </div>
     </div>
 
     <!-- ══ CRISIS PANEL ══ -->
-    <div class="overlay-panel" id="crisis-panel" role="dialog" aria-label="Crisis support resources" aria-modal="true">
-      <div class="panel-card" style="max-width:440px">
+    <div
+      class="overlay-panel"
+      id="crisis-panel"
+      role="dialog"
+      aria-label="Crisis support resources"
+      aria-modal="true"
+    >
+      <div class="panel-card" style="max-width: 440px">
         <div class="panel-header">
           <span class="panel-title">You are not alone</span>
-          <button class="panel-close" onclick="closePanel('crisis-panel')">Close</button>
+          <button class="panel-close" onclick="closePanel('crisis-panel')">
+            Close
+          </button>
         </div>
         <div class="panel-body">
           <div class="crisis-intro">
-            <strong>It takes courage to reach out.</strong> If you're having thoughts of harming yourself or ending your life,
-            please contact one of these services — they are free, confidential, and available right now.
+            <strong>It takes courage to reach out.</strong> If you're having
+            thoughts of harming yourself or ending your life, please contact one
+            of these services — they are free, confidential, and available right
+            now.
           </div>
           <div class="crisis-line-card">
             <div class="cl-name">Befrienders Kuala Lumpur</div>
@@ -381,66 +754,169 @@
           </div>
           <div class="crisis-line-card">
             <div class="cl-name">Crisis Text Line</div>
-            <div class="cl-desc">International · Free &amp; confidential text support</div>
+            <div class="cl-desc">
+              International · Free &amp; confidential text support
+            </div>
             <span class="crisis-number">💬 Text HOME to 741741</span>
           </div>
           <div class="crisis-line-card">
             <div class="cl-name">MIASA Helpline</div>
-            <div class="cl-desc">Malaysia · Mental health support &amp; referrals</div>
+            <div class="cl-desc">
+              Malaysia · Mental health support &amp; referrals
+            </div>
             <span class="crisis-number">📞 03-7732 2414</span>
           </div>
           <div class="crisis-line-card">
             <div class="cl-name">Emergency Services</div>
             <div class="cl-desc">If you are in immediate danger</div>
-            <span class="crisis-number">🚨 999 (Malaysia) · 112 (International)</span>
+            <span class="crisis-number"
+              >🚨 999 (Malaysia) · 112 (International)</span
+            >
           </div>
           <div class="crisis-note">
-            You don't have to explain everything. You can simply say <em>"I need help"</em> and they will take it from there.
+            You don't have to explain everything. You can simply say
+            <em>"I need help"</em> and they will take it from there.
           </div>
         </div>
       </div>
     </div>
 
     <!-- ══ JOURNAL PANEL ══ -->
-    <div class="overlay-panel" id="journal-panel" role="dialog" aria-label="Private journal" aria-modal="true">
-      <div class="panel-card" id="journal-card" style="max-width:560px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
-        <div class="panel-header" style="flex-shrink:0">
+    <div
+      class="overlay-panel"
+      id="journal-panel"
+      role="dialog"
+      aria-label="Private journal"
+      aria-modal="true"
+    >
+      <div
+        class="panel-card"
+        id="journal-card"
+        style="
+          max-width: 560px;
+          max-height: 88vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        "
+      >
+        <div class="panel-header" style="flex-shrink: 0">
           <span class="panel-title">📔 My Journal</span>
-          <button class="panel-close" onclick="closePanel('journal-panel'); lockJournal()">Close</button>
+          <button
+            class="panel-close"
+            onclick="
+              closePanel('journal-panel');
+              lockJournal();
+            "
+          >
+            Close
+          </button>
         </div>
         <!-- Lock screen -->
         <div class="journal-lock-screen" id="journal-lock">
           <div class="lock-icon">🔐</div>
           <h3>Your private journal</h3>
-          <p>Entries are encrypted in your browser using AES-GCM and never sent to any server. Set a passphrase to unlock — or press Enter to use a session-only key.</p>
+          <p>
+            Entries are encrypted in your browser using AES-GCM and never sent
+            to any server. Set a passphrase to unlock — or press Enter to use a
+            session-only key.
+          </p>
           <div class="journal-passphrase">
-            <input type="password" id="journal-pass" placeholder="Passphrase (optional)…" aria-label="Journal passphrase" autocomplete="off" />
+            <input
+              type="password"
+              id="journal-pass"
+              placeholder="Passphrase (optional)…"
+              aria-label="Journal passphrase"
+              autocomplete="off"
+            />
             <button onclick="unlockJournal()">Unlock</button>
           </div>
-          <div class="journal-unlock-err" id="journal-unlock-err">Wrong passphrase — entries couldn't be decrypted.</div>
-          <p style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.6">
-            Leave blank to use a temporary key (entries only last this session). Set a passphrase to keep entries across sessions.
+          <div class="journal-unlock-err" id="journal-unlock-err">
+            Wrong passphrase — entries couldn't be decrypted.
+          </div>
+          <p
+            style="
+              font-size: 11px;
+              color: var(--muted);
+              margin-top: 14px;
+              line-height: 1.6;
+            "
+          >
+            Leave blank to use a temporary key (entries only last this session).
+            Set a passphrase to keep entries across sessions.
           </p>
         </div>
         <!-- Journal main (unlocked) -->
         <div class="journal-main" id="journal-main">
           <div class="journal-toolbar">
-            <button class="journal-new-btn" onclick="journalNewEntry()" aria-label="New journal entry">+ New entry</button>
-            <input class="journal-search" type="text" placeholder="Search entries…" id="journal-search-input" aria-label="Search journal entries" oninput="journalSearch(this.value)" />
-            <button class="journal-lock-btn" onclick="lockJournal()" aria-label="Lock journal">🔒 Lock</button>
+            <button
+              class="journal-new-btn"
+              onclick="journalNewEntry()"
+              aria-label="New journal entry"
+            >
+              + New entry
+            </button>
+            <input
+              class="journal-search"
+              type="text"
+              placeholder="Search entries…"
+              id="journal-search-input"
+              aria-label="Search journal entries"
+              oninput="journalSearch(this.value)"
+            />
+            <button
+              class="journal-lock-btn"
+              onclick="lockJournal()"
+              aria-label="Lock journal"
+            >
+              🔒 Lock
+            </button>
           </div>
           <div class="journal-body">
-            <div class="journal-list" id="journal-list" role="list" aria-label="Journal entries"></div>
+            <div
+              class="journal-list"
+              id="journal-list"
+              role="list"
+              aria-label="Journal entries"
+            ></div>
             <div class="journal-editor">
               <div class="journal-editor-date" id="journal-editor-date">
                 <span id="journal-current-date">—</span>
-                <button class="journal-delete-btn" onclick="journalDeleteEntry()" aria-label="Delete entry">Delete</button>
+                <button
+                  class="journal-delete-btn"
+                  onclick="journalDeleteEntry()"
+                  aria-label="Delete entry"
+                >
+                  Delete
+                </button>
               </div>
-              <textarea class="journal-textarea" id="journal-textarea" placeholder="What's on your mind today?…" aria-label="Journal entry text" oninput="journalAutoSave()"></textarea>
+              <textarea
+                class="journal-textarea"
+                id="journal-textarea"
+                placeholder="What's on your mind today?…"
+                aria-label="Journal entry text"
+                oninput="journalAutoSave()"
+              ></textarea>
               <div class="journal-save-bar">
-                <button class="journal-save-btn" onclick="journalSave()" aria-label="Save journal entry">Save</button>
-                <span class="journal-save-status" id="journal-save-status" aria-live="polite"></span>
-                <button class="journal-share-btn" onclick="journalShareWithSage()" aria-label="Share this entry with Sage privately">🌿 Share with Sage</button>
+                <button
+                  class="journal-save-btn"
+                  onclick="journalSave()"
+                  aria-label="Save journal entry"
+                >
+                  Save
+                </button>
+                <span
+                  class="journal-save-status"
+                  id="journal-save-status"
+                  aria-live="polite"
+                ></span>
+                <button
+                  class="journal-share-btn"
+                  onclick="journalShareWithSage()"
+                  aria-label="Share this entry with Sage privately"
+                >
+                  🌿 Share with Sage
+                </button>
               </div>
             </div>
           </div>
@@ -449,79 +925,261 @@
     </div>
 
     <!-- ══ SETTINGS PANEL ══ -->
-    <div class="overlay-panel" id="settings-panel" role="dialog" aria-label="Settings" aria-modal="true">
-      <div class="panel-card" style="max-width:380px">
+    <div
+      class="overlay-panel"
+      id="settings-panel"
+      role="dialog"
+      aria-label="Settings"
+      aria-modal="true"
+    >
+      <div class="panel-card" style="max-width: 380px">
         <div class="panel-header">
           <span class="panel-title">Settings</span>
-          <button class="panel-close" onclick="closePanel('settings-panel')">Close</button>
+          <button class="panel-close" onclick="closePanel('settings-panel')">
+            Close
+          </button>
         </div>
         <div class="panel-body">
           <div class="resource-section">
             <h3>Text size</h3>
             <div class="font-size-row">
               <span>Message font size</span>
-              <button class="fz-btn active" id="fz-sm" onclick="setFontSize('sm')" aria-label="Small text">A</button>
-              <button class="fz-btn" id="fz-lg" onclick="setFontSize('lg')" aria-label="Large text" style="font-size:15px">A</button>
-              <button class="fz-btn" id="fz-xl" onclick="setFontSize('xl')" aria-label="Extra large text" style="font-size:17px">A</button>
+              <button
+                class="fz-btn active"
+                id="fz-sm"
+                onclick="setFontSize('sm')"
+                aria-label="Small text"
+              >
+                A
+              </button>
+              <button
+                class="fz-btn"
+                id="fz-lg"
+                onclick="setFontSize('lg')"
+                aria-label="Large text"
+                style="font-size: 15px"
+              >
+                A
+              </button>
+              <button
+                class="fz-btn"
+                id="fz-xl"
+                onclick="setFontSize('xl')"
+                aria-label="Extra large text"
+                style="font-size: 17px"
+              >
+                A
+              </button>
             </div>
           </div>
           <div class="resource-section">
             <h3>Notifications &amp; sound</h3>
-            <div class="pref-row" id="pref-sound" onclick="togglePref('sound')" role="switch" aria-checked="false" tabindex="0">
+            <div
+              class="pref-row"
+              id="pref-sound"
+              onclick="togglePref('sound')"
+              role="switch"
+              aria-checked="false"
+              tabindex="0"
+            >
               <span>🔔 Sound on new message</span><span class="tog"></span>
             </div>
-            <div class="pref-row" id="pref-notif" onclick="togglePref('notif')" role="switch" aria-checked="false" tabindex="0">
+            <div
+              class="pref-row"
+              id="pref-notif"
+              onclick="togglePref('notif')"
+              role="switch"
+              aria-checked="false"
+              tabindex="0"
+            >
               <span>📳 Browser notifications</span><span class="tog"></span>
             </div>
           </div>
           <div class="resource-section">
             <h3>Accessibility</h3>
-            <div class="pref-row" id="pref-contrast" onclick="togglePref('contrast')" role="switch" aria-checked="false" tabindex="0">
+            <div
+              class="pref-row"
+              id="pref-contrast"
+              onclick="togglePref('contrast')"
+              role="switch"
+              aria-checked="false"
+              tabindex="0"
+            >
               <span>🔲 High contrast mode</span><span class="tog"></span>
             </div>
           </div>
           <div class="resource-section">
             <h3>Language preference</h3>
-            <div class="pref-row" id="pref-bm" onclick="togglePref('bm')" role="switch" aria-checked="false" tabindex="0">
-              <span>🇲🇾 Prefer Bahasa Malaysia from Sage</span><span class="tog"></span>
+            <div
+              class="pref-row"
+              id="pref-bm"
+              onclick="togglePref('bm')"
+              role="switch"
+              aria-checked="false"
+              tabindex="0"
+            >
+              <span>🇲🇾 Prefer Bahasa Malaysia from Sage</span
+              ><span class="tog"></span>
             </div>
           </div>
           <div class="resource-section">
             <h3>Sage memory <span class="memory-badge">session only</span></h3>
             <div class="memory-notice">
-              Sage can remember context across your private sessions — stored encrypted in your browser, never sent to any server.
+              Sage can remember context across your private sessions — stored
+              encrypted in your browser, never sent to any server.
             </div>
-            <div class="pref-row" id="pref-memory" onclick="togglePref('memory')" role="switch" aria-checked="false" tabindex="0">
+            <div
+              class="pref-row"
+              id="pref-memory"
+              onclick="togglePref('memory')"
+              role="switch"
+              aria-checked="false"
+              tabindex="0"
+            >
               <span>🧠 Enable Sage memory</span><span class="tog"></span>
             </div>
-            <div id="memory-summary" style="display:none;margin-top:8px"></div>
-            <button id="memory-clear-btn" onclick="clearSageMemory()" style="display:none;margin-top:8px;width:100%;background:none;border:1px solid var(--border2);border-radius:8px;padding:7px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--sans)">
+            <div
+              id="memory-summary"
+              style="display: none; margin-top: 8px"
+            ></div>
+            <button
+              id="memory-clear-btn"
+              onclick="clearSageMemory()"
+              style="
+                display: none;
+                margin-top: 8px;
+                width: 100%;
+                background: none;
+                border: 1px solid var(--border2);
+                border-radius: 8px;
+                padding: 7px;
+                font-size: 12px;
+                color: var(--muted);
+                cursor: pointer;
+                font-family: var(--sans);
+              "
+            >
               🗑 Clear all Sage memory
             </button>
           </div>
           <div class="resource-section">
             <h3>Mood chart</h3>
             <div id="mood-chart-section">
-              <div id="mood-chart-container" style="background:var(--surface2);border-radius:10px;padding:12px 14px">
-                <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Room mood · last 7 days</div>
-                <canvas id="mood-chart" width="340" height="80" aria-label="Mood trend chart"></canvas>
-                <div id="mood-chart-empty" style="font-size:12px;color:var(--muted);text-align:center;padding:16px 0;display:none">No mood data yet for this room</div>
+              <div
+                id="mood-chart-container"
+                style="
+                  background: var(--surface2);
+                  border-radius: 10px;
+                  padding: 12px 14px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 11px;
+                    color: var(--muted);
+                    margin-bottom: 8px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                  "
+                >
+                  Room mood · last 7 days
+                </div>
+                <canvas
+                  id="mood-chart"
+                  width="340"
+                  height="80"
+                  aria-label="Mood trend chart"
+                ></canvas>
+                <div
+                  id="mood-chart-empty"
+                  style="
+                    font-size: 12px;
+                    color: var(--muted);
+                    text-align: center;
+                    padding: 16px 0;
+                    display: none;
+                  "
+                >
+                  No mood data yet for this room
+                </div>
               </div>
             </div>
           </div>
-          <div class="resource-section" style="margin-bottom:0">
+          <div class="resource-section" style="margin-bottom: 0">
             <h3>Volunteer moderator</h3>
-            <p style="font-size:12px;color:var(--text2);margin-bottom:10px">
-              Help keep Mindspace safe. Moderators can remove harmful content and support users in distress.
+            <p
+              style="font-size: 12px; color: var(--text2); margin-bottom: 10px"
+            >
+              Help keep Mindspace safe. Moderators can remove harmful content
+              and support users in distress.
             </p>
-            <div id="mod-apply-form" style="display:flex;flex-direction:column;gap:8px">
-              <textarea id="mod-why" placeholder="Why do you want to help moderate?" style="background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;resize:none;height:72px" maxlength="500" aria-label="Why you want to moderate"></textarea>
-              <input id="mod-avail" placeholder="When are you usually available?" style="background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none" maxlength="100" aria-label="Availability" />
-              <button onclick="submitModApplication()" style="background:var(--matcha);border:none;border-radius:8px;color:#fff;padding:9px;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer">
+            <div
+              id="mod-apply-form"
+              style="display: flex; flex-direction: column; gap: 8px"
+            >
+              <textarea
+                id="mod-why"
+                placeholder="Why do you want to help moderate?"
+                style="
+                  background: var(--bg);
+                  border: 1.5px solid var(--border2);
+                  border-radius: 8px;
+                  padding: 8px 12px;
+                  color: var(--text);
+                  font-family: var(--sans);
+                  font-size: 13px;
+                  outline: none;
+                  resize: none;
+                  height: 72px;
+                "
+                maxlength="500"
+                aria-label="Why you want to moderate"
+              ></textarea>
+              <input
+                id="mod-avail"
+                placeholder="When are you usually available?"
+                style="
+                  background: var(--bg);
+                  border: 1.5px solid var(--border2);
+                  border-radius: 8px;
+                  padding: 8px 12px;
+                  color: var(--text);
+                  font-family: var(--sans);
+                  font-size: 13px;
+                  outline: none;
+                "
+                maxlength="100"
+                aria-label="Availability"
+              />
+              <button
+                onclick="submitModApplication()"
+                style="
+                  background: var(--matcha);
+                  border: none;
+                  border-radius: 8px;
+                  color: #fff;
+                  padding: 9px;
+                  font-family: var(--sans);
+                  font-size: 13px;
+                  font-weight: 500;
+                  cursor: pointer;
+                "
+              >
                 Apply as volunteer moderator
               </button>
             </div>
-            <div id="mod-apply-sent" style="display:none;font-size:13px;color:var(--matcha-deep);background:var(--matcha-bg);border-radius:8px;padding:10px 14px;border:1px solid var(--matcha-border)">
+            <div
+              id="mod-apply-sent"
+              style="
+                display: none;
+                font-size: 13px;
+                color: var(--matcha-deep);
+                background: var(--matcha-bg);
+                border-radius: 8px;
+                padding: 10px 14px;
+                border: 1px solid var(--matcha-border);
+              "
+            >
               ✅ Application received — thank you!
             </div>
           </div>
